@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Fitness Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+
+        .main-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .calendar {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .calendar h2 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .calendar-day {
+            padding: 8px 5px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .day-name {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .calendar-day.workout-done {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
+        }
+
+        .calendar-day.workout-done .day-name {
+            color: #ff466b;
+        }
+
+        .workout-category {
+            margin-bottom: 40px;
+        }
+
+        .workout-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .workout-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .workout-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .workout-image {
+            width: 100%;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .workout-info {
+            padding: 15px;
+        }
+
+        h1 {
+            color: #ff466b;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #ff466b;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .beginner { background: #4CAF50; color: white; }
+        .intermediate { background: #FFC107; color: black; }
+        .advanced { background: #f44336; color: white; }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff466b;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .body-part-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #ff466b;
+            color: white;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            color: #ff466b;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-link:hover {
+            color: #ff466b;
+        }
+
+        .nav-link.active {
+            color: #ff466b;
+        }
+
+        /* Adjust main content padding to account for fixed navbar */
+        body {
+            padding-top: 70px;
+        }
+
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .nav-button.active {
+            color: #ff466b;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        /* Add padding to prevent content from being hidden behind footer */
+        body {
+            padding-bottom: 80px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="workoutPlan.html" class="nav-logo">FitnessJourney</a>
+    </nav>
+
+    <div class="dashboard">
+        <div class="main-content">
+            <h1>Your Personalized Workout Plan</h1>
+
+            <div class="workout-category">
+                <h2>Today's Recommended Workouts</h2>
+                <div class="workout-cards">
+                    <div class="workout-card">
+                        <div class="workout-image" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')"></div>
+                        <div class="workout-info">
+                            <h3>Core Strength Basics</h3>
+                            <p>15 min • Abs Focus</p>
+                            <span class="difficulty beginner">Beginner</span>
+                        </div>
+                    </div>
+                    <div class="workout-card">
+                        <div class="workout-image" style="background-image: url('https://images.unsplash.com/photo-1574680096145-d05b474e2155?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')"></div>
+                        <div class="workout-info">
+                            <h3>Upper Body Power</h3>
+                            <p>20 min • Chest & Arms</p>
+                            <span class="difficulty intermediate">Intermediate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workout-category">
+                <h2>All Workouts</h2>
+                <div class="workout-cards">
+                    <!-- Abs Workouts -->
+                    <div class="workout-card">
+                        <div class="workout-image" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')"></div>
+                        <div class="workout-info">
+                            <h3>Core Strength Basics</h3>
+                            <p>15 min • Abs Focus</p>
+                            <span class="difficulty beginner">Beginner</span>
+                        </div>
+                    </div>
+
+                    <!-- Chest Workouts -->
+                    <div class="workout-card">
+                        <div class="workout-image" style="background-image: url('https://images.unsplash.com/photo-1574680096145-d05b474e2155?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')"></div>
+                        <div class="workout-info">
+                            <h3>Chest Builder</h3>
+                            <p>30 min • Chest Focus</p>
+                            <span class="difficulty advanced">Advanced</span>
+                        </div>
+                    </div>
+
+                    <!-- Arms Workouts -->
+                    <div class="workout-card">
+                        <div class="workout-image" style="background-image: url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')"></div>
+                        <div class="workout-info">
+                            <h3>Arm Sculptor</h3>
+                            <p>25 min • Arms Focus</p>
+                            <span class="difficulty intermediate">Intermediate</span>
+                        </div>
+                    </div>
+
+                    <!-- Legs Workouts -->
+                    <div class="workout-card">
+                        <div class="workout-image" style="background-image: url('https://images.unsplash.com/photo-1434608519344-49d77a699e1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')"></div>
+                        <div class="workout-info">
+                            <h3>Leg Day Basics</h3>
+                            <p>40 min • Legs Focus</p>
+                            <span class="difficulty beginner">Beginner</span>
+                        </div>
+                    </div>
+
+                    <!-- Full Body Workouts -->
+                    <div class="workout-card">
+                        <div class="workout-image" style="background-image: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')"></div>
+                        <div class="workout-info">
+                            <h3>Total Body Burn</h3>
+                            <p>45 min • Full Body</p>
+                            <span class="difficulty advanced">Advanced</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="stats">
+                <h2>Your Progress</h2>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Workouts Done</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">180</div>
+                        <div class="stat-label">Minutes Active</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">Avg Rating</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calendar">
+                <h2>This Week</h2>
+                <div class="calendar-grid">
+                    <!-- Calendar will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <a href="workoutPlan.html" class="nav-button active">
+            <div class="nav-icon">🏋️‍♂️</div>
+            Home
+        </a>
+        <a href="report.html" class="nav-button">
+            <div class="nav-icon">📊</div>
+            Report
+        </a>
+        <a href="settings.html" class="nav-button">
+            <div class="nav-icon">⚙️</div>
+            Settings
+        </a>
+    </div>
+
+    <script>
+        function populateWeeklyCalendar() {
+            const calendarGrid = document.querySelector('.calendar-grid');
+            const today = new Date();
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Clear existing calendar
+            calendarGrid.innerHTML = '';
+
+            // Get the start of the week (Sunday)
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+
+            // Create 7 days starting from Sunday
+            for (let i = 0; i < 7; i++) {
+                const currentDate = new Date(startOfWeek);
+                currentDate.setDate(startOfWeek.getDate() + i);
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                
+                // Add workout-done class for completed workouts (example data)
+                if ([1, 3, 5].includes(i)) {
+                    dayElement.classList.add('workout-done');
+                }
+                
+                dayElement.innerHTML = `
+                    <div class="day-name">${daysOfWeek[i]}</div>
+                    <div class="day-date">${currentDate.getDate()}</div>
+                `;
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Initialize calendar
+        populateWeeklyCalendar();
+    </script>
+</body>
+</html> 
